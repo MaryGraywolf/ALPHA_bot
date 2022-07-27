@@ -10,4 +10,4 @@ class MyClient(discord.Client):
         if message.content == "?regras":
             await message.channel.send(f'{message.author.name} as regras do servidor são:{os.linesep}')
 client = MyClient()
-client.run('MTAwMTYzMjkwOTYzNzIwMjAzMg.GMKCMP.smrKRU3bmewRJIavAs-ERnr0OETMOZWPESIZxI')
+client.run('token')
