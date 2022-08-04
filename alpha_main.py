@@ -1,38 +1,41 @@
 #Bibliotecas
+from this import s
 import discord
 import datetime
 from discord.ext import commands, tasks
+import json
 import os
 
-class MyClient(discord.Client):
+with open('configuration.json', 'r') as config:
+    data = json.load(config)
+    token = data['token']
+    prefix = data['prefix']
+    owner_id = data['owner_id']
 
-    async def on_ready(self):
-        print('Auuuuuuu, estou pronto para morder umas bundas! Ass {0}!'.format(self.user))
+class Greetings(commands.Cog):
+    def __init__(self, alpha):
+        self.bot = alpha
+        self._last_member = None
 
-    async def on_message(self, message):
-        print('Message from {0.author}: {0.content}'.format(message))
+# Intenções
 
-        if message.content == "!regras":
-            await message.channel.send(f'{message.author.name} as regras do servidor são:{os.linesep}')
+intents = discord.Intents.default()
 
-        # filtro de palavrões
-        palavreado = ['tnc', 'caralho', 'porra', 'buceta']
+# O bot
 
-        for i in palavreado:
-            if message.content == i:
-                await message.channel.send(f'Por favor, @{message.author.name}, não ofenda os demais usuários!!')
-                await message.delete()
+alpha = commands.Bot(prefix, intents = intents, owner_id = owner_id)
 
+# Carregando ferramenta
 
-        """ if message.content == '!report':
-            message = message.get_channel('ID')
-            await message.channel.send(f'{message.author.name} abriu uma denuúncia contra o(a)') """
+if __name__ == '__main__':
+    for filename in os.listdir('src'):
+        if filename.endswith('.py'):
+            alpha.load_extension(f'src.{filename[:-3]}')
 
+@alpha.event
+async def on_ready():
+    print(f'Auuuuuuu, estou pronto para morder umas bundas! Ass {alpha.user}!')
+    print(discord.__version__)
+    await alpha.change_presence(activity=discord.Activity(type = discord.ActivityType.watching, name = f'{alpha.command_prefix}help'))
 
-# bot.get_channel(id do canal) para mandar a mensagem para um determinado canal
-#.report @user <reason>
-
-client = MyClient()
-# LEMBRAR DE TIRAR A CHAVE DE ACESSO DO BOT ANTES DE COMMITAR
-client.run('token')
-##TESTE ANA
+alpha.run(token)
